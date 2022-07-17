@@ -2,10 +2,12 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <boost/property_tree/ptree.hpp>
 #include "TruthTable.h"
 #include "GateType.h"
 #include "Gate.h"
+#include "rapidjson/prettywriter.h"
+
+using namespace rapidjson;
 
 class Circuit
 {
@@ -16,7 +18,19 @@ public:
 	void AddProbe(std::string gateName);
 	Gate* GetGate(std::string gateName) { return &(m_gates[gateName]); }
 	std::vector<Gate*> ProbeAllGates();
-	boost::property_tree::ptree GetJson();
+
+	template <typename Writer>
+	void Serialize(Writer& writer) const noexcept{
+		writer.StartObject();
+
+		writer.String(("gates"));
+		writer.StartArray();
+		for (const auto& [k, v] : m_gates)
+			v.Serialize(writer);
+		writer.EndArray();
+
+		writer.EndObject();
+	}
 private:
 	std::map<std::string, TruthTable> m_truthTables;
 	std::map<std::string, GateType> m_gateTypes;

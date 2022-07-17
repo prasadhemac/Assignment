@@ -27,33 +27,6 @@ void Gate::Probe() noexcept
 	m_probed = true;
 }
 
-boost::property_tree::ptree Gate::GetJson()
-{
-	boost::property_tree::ptree pt;
-	pt.add("id", m_name);
-	pt.add("table", m_type->GetTruthTableName());
-	pt.add("type", m_type->GetType());
-	pt.add("probed", m_probed);
-
-	boost::property_tree::ptree inputs, outputs;
-	for (auto& [k,v] : m_inGates)
-	{
-		boost::property_tree::ptree pt;
-		pt.put_value(v->GetName());
-		inputs.push_back(std::make_pair("", pt));
-	}
-	pt.add_child("inputs", inputs);
-	 
-	for (auto& v : m_outGates)
-	{
-		boost::property_tree::ptree pt;
-		pt.put_value(v->GetName());
-		outputs.push_back(std::make_pair("", pt));
-	}
-	pt.add_child("outputs", outputs);
-	return pt;
-}
-
 int Gate::GetTransitionOutput() const
 {
 	std::vector<int> inputs;

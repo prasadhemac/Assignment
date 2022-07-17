@@ -2,9 +2,8 @@
 //
 #include <fstream>
 #include <iostream>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
+#include "rapidjson/prettywriter.h"
 #include "Simulation.h"
 
 int main(int argc, char** argv)
@@ -28,13 +27,18 @@ int main(int argc, char** argv)
     }
         
     simulation->Run();
-    
+
     if (json)
     {
-        boost::property_tree::ptree simResult = simulation->GetJson();
+        // boost property_tree is replaced by rapidjson
+        // rapidjson is one of the widely used open source json parser/generator
+        // performance of the json output generating functionality is improved from seconds to miliseconds for 5devadas13.in
+        rapidjson::StringBuffer sb;
+        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+        simulation->Serialize(writer);
         std::ofstream output("circuit.jsonp", std::ios::out);
         output << "onJsonp(";
-        boost::property_tree::write_json(output, simResult);
+        output << sb.GetString();
         output << ");\n";
     }
 

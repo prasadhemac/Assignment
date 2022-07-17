@@ -1,5 +1,7 @@
 #include <stdexcept>
 #include "Circuit.h"
+
+
 /* 
 Adds a truth table that can be later attached to gate types.
 Args:
@@ -75,14 +77,3 @@ std::vector<Gate*> Circuit::ProbeAllGates()
 	return probed;
 }
 
-boost::property_tree::ptree Circuit::GetJson()
-{
-	boost::property_tree::ptree pt;
-	for (auto& [k, v] : m_gates)
-	{
-		pt.push_back(std::make_pair("", v.GetJson()));
-	}
-	boost::property_tree::ptree ret;
-	ret.add_child("gates", pt);
-	return ret;
-}

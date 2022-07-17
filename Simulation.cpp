@@ -18,23 +18,6 @@ void Transition::Apply()
 	gate->SetOutput(newOutput);
 }
 
-boost::property_tree::ptree Probe::GetJson()
-{
-	boost::property_tree::ptree children;
-	boost::property_tree::ptree pt;
-	pt.put_value(time);
-	children.push_back(std::make_pair("", pt));
-
-	pt.put_value(gateName);
-	children.push_back(std::make_pair("", pt));
-
-	pt.put_value(newValue);
-	children.push_back(std::make_pair("", pt));
-
-	return children;
-}
-
-
 void Simulation::AddTransition(std::string gateName, int outputValue, int outputTime)
 {
 	Gate* pGate = m_circuit->GetGate(gateName);
@@ -171,18 +154,6 @@ void Simulation::UndoProbeAllGates()
 		gate->UndoProbe();
 	}
 	m_undoLog.clear();
-}
-
-boost::property_tree::ptree Simulation::GetJson()
-{
-	boost::property_tree::ptree pt;
-	pt.add_child("circuit", m_circuit->GetJson());
-	boost::property_tree::ptree probes;
-	for (auto& p : m_probes)
-		probes.push_back(std::make_pair("",p.GetJson()));
-	pt.add_child("trace", probes);
-	pt.add("layout", m_layout);
-	return pt;
 }
 
 void Simulation::PrintProbes(std::ostream& os)

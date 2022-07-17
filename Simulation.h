@@ -4,6 +4,9 @@
 #include <queue>
 
 #include "Circuit.h"
+#include "rapidjson/prettywriter.h"
+
+using namespace rapidjson;
 
 struct Transition
 {
@@ -31,7 +34,19 @@ struct Probe
 			return newValue < other.newValue;
 		return time < other.time;
 	}
-	boost::property_tree::ptree GetJson();
+
+	template <typename Writer>
+	void Serialize(Writer& writer) const noexcept{
+		writer.StartArray();
+		writer.Int(time);
+	#if RAPIDJSON_HAS_STDSTRING
+		writer.String(gateName);
+	#else
+		writer.String(gateName.c_str(), static_cast<SizeType>(gateName.length()));
+	#endif
+		writer.Int(newValue);
+		writer.EndArray();
+	}
 	int time{};
 	std::string gateName;
 	int newValue{};
@@ -49,7 +64,27 @@ public:
 	void Run();
 	void ProbeAllGates() { m_undoLog = m_circuit->ProbeAllGates(); }
 	void UndoProbeAllGates();
-	boost::property_tree::ptree GetJson();
+
+	template <typename Writer>
+	void Serialize(Writer& writer) const noexcept{
+		writer.StartObject();
+
+		writer.String("circuit");
+		m_circuit->Serialize(writer);
+		writer.String(("trace"));
+		writer.StartArray();
+		for(const auto& probe: m_probes){
+			probe.Serialize(writer);
+		}
+		writer.EndArray();
+		writer.String("layout");
+	#if RAPIDJSON_HAS_STDSTRING
+		writer.String(m_layout);
+	#else
+		writer.String(m_layout.c_str(), static_cast<SizeType>(m_layout.length()));
+	#endif
+		writer.EndObject();
+	}
 	void PrintProbes(std::ostream& os);
 private:
 	std::unique_ptr<Circuit> m_circuit;
