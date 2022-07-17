@@ -1,8 +1,8 @@
 #pragma once
 #include <fstream>
 #include <memory>
+#include <queue>
 
-#include "PriorityQueue.h"
 #include "Circuit.h"
 
 struct Transition
@@ -55,7 +55,9 @@ private:
 	std::unique_ptr<Circuit> m_circuit;
 	std::string m_layout;
 	std::vector<Transition> m_inTransitions;
-	PriorityQueue<Transition> m_queue;
+	std::priority_queue<Transition, std::vector<Transition>, auto(*)(Transition&,Transition&)->bool> m_queue{
+		[]( Transition& a, Transition& b )->bool { return a.time >= b.time; }
+	};
 	std::vector<Probe> m_probes;
 	std::vector<Gate*> m_undoLog;
 };

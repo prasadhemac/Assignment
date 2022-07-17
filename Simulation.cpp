@@ -116,17 +116,30 @@ void Simulation::LayoutFromFile(std::ifstream& is)
 
 int Simulation::Step()
 {
-	int stepTime = m_queue.min()->time;
+	// The issue with this custom PriorityQueue is min() function always iterate through all the elements 
+	// to find the min element which is not latency friendly.
+	// We can rather use STL container with sorting.
+	// So we have two options for m_queue
+	// 		1. use STL vector and sort it at the begining of Step() function with O(n*logn) time complexity
+	//		2. use STL priority_queue which gets sorted when pushing the element with O(logn) time complexity,
+	//			So the time complexitity of the queue building loops becomes O(klogn) where k is no of new transitions 
+	//			and n is the no of elements in the queue and k < n
+	// Though time complexity of both options is O(nlogn), second option is slightly better 
+	// since k (i.e. new transitions) < n (i.e. m_queue.size())
+	//
+	// This improves performance significantly from few 10s of seconds to few 100s of miliseconds for 5devadas13.in.
+	int stepTime = m_queue.top().time;
 	std::vector<Transition> transitions;
-	while (m_queue.len() > 0 && m_queue.min()->time == stepTime)
+	while (m_queue.size() > 0 && m_queue.top().time == stepTime)
 	{
-		auto transition = m_queue.pop();
-		if (!transition->IsValid())
+		auto transition = m_queue.top();
+		m_queue.pop();
+		if (!transition.IsValid())
 			continue;
-		transition->Apply();
-		if (transition->gate->IsProbed())
-			m_probes.emplace_back(Probe{ transition->time, transition->gate->GetName(), transition->newOutput });
-		transitions.emplace_back(*transition);
+		transition.Apply();
+		if (transition.gate->IsProbed())
+			m_probes.emplace_back(Probe{ transition.time, transition.gate->GetName(), transition.newOutput });
+		transitions.emplace_back(transition);
 	}
 
 	for (const auto transition : transitions)
@@ -135,7 +148,7 @@ int Simulation::Step()
 		{
 			auto output = gate->GetTransitionOutput();
 			auto time = gate->GetTransitionTime(stepTime);
-			m_queue.append(Transition(gate, output, time));
+			m_queue.push(Transition(gate, output, time));
 		}
 	}
 	return stepTime;
@@ -145,8 +158,8 @@ void Simulation::Run()
 {
 	std::sort(m_inTransitions.begin(), m_inTransitions.end());
 	for (const auto& t : m_inTransitions)
-		m_queue.append(t);
-	while (m_queue.len() > 0)
+		m_queue.push(t);
+	while (m_queue.size() > 0)
 		Step();
 	std::sort(m_probes.begin(), m_probes.end());
 }
