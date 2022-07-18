@@ -6,8 +6,6 @@
 #include "Circuit.h"
 #include "rapidjson/prettywriter.h"
 
-using namespace rapidjson;
-
 struct Transition
 {
 	Transition(Gate* g, int output, int t) : gate(g), newOutput(output), time(t) {}
@@ -42,7 +40,7 @@ struct Probe
 	#if RAPIDJSON_HAS_STDSTRING
 		writer.String(gateName);
 	#else
-		writer.String(gateName.c_str(), static_cast<SizeType>(gateName.length()));
+		writer.String(gateName.c_str(), static_cast<rapidjson::SizeType>(gateName.length()));
 	#endif
 		writer.Int(newValue);
 		writer.EndArray();
@@ -81,7 +79,7 @@ public:
 	#if RAPIDJSON_HAS_STDSTRING
 		writer.String(m_layout);
 	#else
-		writer.String(m_layout.c_str(), static_cast<SizeType>(m_layout.length()));
+		writer.String(m_layout.c_str(), static_cast<rapidjson::SizeType>(m_layout.length()));
 	#endif
 		writer.EndObject();
 	}

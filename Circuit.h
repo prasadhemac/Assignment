@@ -7,8 +7,6 @@
 #include "Gate.h"
 #include "rapidjson/prettywriter.h"
 
-using namespace rapidjson;
-
 class Circuit
 {
 public:

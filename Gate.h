@@ -4,8 +4,6 @@
 #include "GateType.h"
 #include "rapidjson/prettywriter.h"
 
-using namespace rapidjson;
-
 class Gate
 {
 public:
@@ -31,19 +29,19 @@ public:
 	#if RAPIDJSON_HAS_STDSTRING
 		writer.String(m_name);
 	#else
-		writer.String(m_name.c_str(), static_cast<SizeType>(m_name.length()));
+		writer.String(m_name.c_str(), static_cast<rapidjson::SizeType>(m_name.length()));
 	#endif
 		writer.String("table");
 	#if RAPIDJSON_HAS_STDSTRING
 		writer.String(m_type->GetTruthTableName());
 	#else
-		writer.String(m_type->GetTruthTableName().c_str(), static_cast<SizeType>(m_type->GetTruthTableName().length()));
+		writer.String(m_type->GetTruthTableName().c_str(), static_cast<rapidjson::SizeType>(m_type->GetTruthTableName().length()));
 	#endif
 		writer.String("type");
 	#if RAPIDJSON_HAS_STDSTRING
 		writer.String(m_type->GetType());
 	#else
-		writer.String(m_type->GetType().c_str(), static_cast<SizeType>(m_type->GetType().length()));
+		writer.String(m_type->GetType().c_str(), static_cast<rapidjson::SizeType>(m_type->GetType().length()));
 	#endif
 		writer.String("probed");
 		writer.Bool(m_probed);
@@ -55,7 +53,7 @@ public:
 	#if RAPIDJSON_HAS_STDSTRING
 			writer.String(v->GetName());
 	#else
-			writer.String(v->GetName().c_str(), static_cast<SizeType>(v->GetName().length()));
+			writer.String(v->GetName().c_str(), static_cast<rapidjson::SizeType>(v->GetName().length()));
 	#endif
 		}			
 		writer.EndArray();
@@ -67,7 +65,7 @@ public:
 	#if RAPIDJSON_HAS_STDSTRING
 			writer.String(v->GetName());
 	#else
-			writer.String(v->GetName().c_str(), static_cast<SizeType>(v->GetName().length()));
+			writer.String(v->GetName().c_str(), static_cast<rapidjson::SizeType>(v->GetName().length()));
 	#endif
 		}
 		writer.EndArray();
