@@ -14,7 +14,7 @@ int Transition::GlobalId = 0;
 void Transition::Apply()
 {
 	if (!IsValid())
-		throw std::runtime_error("Gate output should not transition to the same value");
+		error_handler::throw_with_trace(std::runtime_error("Gate output should not transition to the same value"));
 	gate->SetOutput(newOutput);
 }
 
@@ -49,7 +49,7 @@ std::unique_ptr<Simulation> Simulation::GetSimulationFromFile(std::ifstream& is)
 		else if (command[0] == "type")
 		{
 			if (command.size() != 4)
-				throw std::runtime_error("Invalid number of arguments for gate type");
+				error_handler::throw_with_trace(std::runtime_error("Invalid number of arguments for gate type"));
 			circut->AddGateType(command[1], command[2], std::stoi(command[3]));
 		}
 		else if (command[0] == "gate")
@@ -62,13 +62,13 @@ std::unique_ptr<Simulation> Simulation::GetSimulationFromFile(std::ifstream& is)
 		else if (command[0] == "probe")
 		{
 			if (command.size() != 2)
-				throw std::runtime_error("Invalid number of arguments for probe type");
+				error_handler::throw_with_trace(std::runtime_error("Invalid number of arguments for probe type"));
 			circut->AddProbe(command[1]);
 		}
 		else if (command[0] == "flip")
 		{
 			if (command.size() != 4)
-				throw std::runtime_error("Invalid number of arguments for flip type");
+				error_handler::throw_with_trace(std::runtime_error("Invalid number of arguments for flip type"));
 			simulation->AddTransition(command[1], std::stoi(command[2]), std::stoi(command[3]));
 		}
 		else if (command[0] == "done")

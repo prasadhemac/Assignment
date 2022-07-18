@@ -1,15 +1,11 @@
 #include <stdexcept>
 #include "Gate.h"
+#include "ErrorHandler.h"
 
-
-namespace
-{
-	void RaiseError(const char* c) { throw std::runtime_error(c); }
-}
 void Gate::ConnectInput(int i, Gate* target)
 {
 	if (m_inGates.find(i) != m_inGates.end())
-		throw std::runtime_error("input terminal already connected");
+		error_handler::throw_with_trace(std::runtime_error("input terminal already connected"));
 	m_inGates.insert({ i, target });
 	target->AddOutput(this);
 }
@@ -22,7 +18,7 @@ void Gate::AddOutput(Gate* target)
 void Gate::Probe()
 {
 	if (m_probed)
-		RaiseError("Gate already probed");
+		error_handler::throw_with_trace(std::runtime_error("Gate already probed"));
 		
 	m_probed = true;
 }
