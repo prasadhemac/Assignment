@@ -15,5 +15,5 @@ public:
 private:
 	std::string m_type;
 	const TruthTable &m_truthTable;
-	int m_delay;
+	int m_delay{0};
 };
