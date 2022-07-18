@@ -12,8 +12,8 @@ class Circuit
 public:
 	void AddTruthTable(std::string type, std::vector<int> outputs);
 	void AddGateType(std::string name, std::string truthTableName, int delay);
-	void AddGate(std::string name, std::string typeName, std::vector<std::string> inputNames);
-	void AddProbe(std::string gateName);
+	void AddGate(std::string name, const std::string& typeName, const std::vector<std::string>& inputNames);
+	void AddProbe(const std::string& gateName);
 	Gate& GetGate(const std::string& gateName);
 	TruthTable& GetTruthTable(const std::string& name);
 	GateType& GetType(const std::string& name);

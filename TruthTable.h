@@ -17,7 +17,7 @@ public:
         else
             m_inputCount = 2;
     }
-    int GetOutput(std::vector<int> inputs) const;
+    int GetOutput(const std::vector<int>& inputs) const;
     std::string GetName() const
     {
         return m_name;
@@ -25,6 +25,6 @@ public:
 private:
     std::string m_name;
     std::vector<int> m_table;
-    int m_inputCount;
+    int m_inputCount{1};
 };
 

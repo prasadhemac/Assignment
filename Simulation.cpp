@@ -18,7 +18,7 @@ void Transition::Apply()
 	gate->SetOutput(newOutput);
 }
 
-void Simulation::AddTransition(std::string gateName, int outputValue, int outputTime)
+void Simulation::AddTransition(const std::string& gateName, int outputValue, int outputTime)
 {
 	Gate& pGate = m_circuit->GetGate(gateName);
 	m_inTransitions.emplace_back(Transition{ &pGate, outputValue, outputTime });
@@ -125,7 +125,7 @@ int Simulation::Step()
 		transitions.emplace_back(transition);
 	}
 
-	for (const auto transition : transitions)
+	for (const auto& transition : transitions)
 	{
 		for (auto* gate : transition.gate->GetOutGates())
 		{

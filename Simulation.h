@@ -56,7 +56,7 @@ public:
 	Simulation() : m_circuit(new Circuit()) {};
 	static std::unique_ptr<Simulation> GetSimulationFromFile(std::ifstream& is);
 	void LayoutFromFile(std::ifstream& is);
-	void AddTransition(std::string gateName, int outputValue, int outputTime);
+	void AddTransition(const std::string& gateName, int outputValue, int outputTime);
 	Circuit* GetCircut() { return m_circuit.get(); }
 	int Step();
 	void Run();
@@ -88,8 +88,8 @@ private:
 	std::unique_ptr<Circuit> m_circuit;
 	std::string m_layout;
 	std::vector<Transition> m_inTransitions;
-	std::priority_queue<Transition, std::vector<Transition>, auto(*)(Transition&,Transition&)->bool> m_queue{
-		[]( Transition& a, Transition& b )->bool { return a.time >= b.time; }
+	std::priority_queue<Transition, std::vector<Transition>, auto(*)(const Transition&,const Transition&)->bool> m_queue{
+		[]( const Transition& a, const Transition& b )->bool { return a.time >= b.time; }
 	};
 	std::vector<Probe> m_probes;
 	std::vector<Gate*> m_undoProbes;

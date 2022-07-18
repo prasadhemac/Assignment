@@ -13,7 +13,6 @@ void Circuit::AddTruthTable(std::string type, std::vector<int> outputs)
 	if (m_truthTables.find(type) != m_truthTables.end())
 		throw std::runtime_error("Truth table name already used");
 	m_truthTables.insert({ type, TruthTable(type, outputs) });
-
 }
 
 /* 
@@ -46,7 +45,7 @@ Args:
 		to this gate's inputs.
 
 */
-void Circuit::AddGate(std::string name, std::string typeName, std::vector<std::string> inputNames)
+void Circuit::AddGate(std::string name, const std::string& typeName, const std::vector<std::string>& inputNames)
 {
 	if (m_gates.find(name) != m_gates.end())
 		throw std::runtime_error("Gate name already used");
@@ -81,7 +80,7 @@ GateType& Circuit::GetType(const std::string& name){
 	return it->second;
 }
 
-void Circuit::AddProbe(std::string gateName)
+void Circuit::AddProbe(const std::string& gateName)
 {
 	auto& gate = GetGate(gateName);
 	gate.Probe();
