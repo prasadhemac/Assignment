@@ -19,7 +19,7 @@ void Gate::AddOutput(Gate* target)
 	m_outGates.emplace_back(target);
 }
 
-void Gate::Probe() noexcept
+void Gate::Probe()
 {
 	if (m_probed)
 		RaiseError("Gate already probed");
@@ -32,15 +32,15 @@ int Gate::GetTransitionOutput() const
 	std::vector<int> inputs;
 	for (const auto& [k, v] : m_inGates)
 		inputs.emplace_back(v->GetOutput());
-	return m_type->GetOutput(inputs);
+	return m_type.GetOutput(inputs);
 }
 
 int Gate::GetTransitionTime(int time) const
 {
-	return time + m_type->GetDelay();
+	return time + m_type.GetDelay();
 }
 
-void Gate::UndoProbe()
+void Gate::UndoProbe() noexcept
 {
 	m_probed = false;
 }

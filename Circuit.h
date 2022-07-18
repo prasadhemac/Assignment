@@ -14,7 +14,9 @@ public:
 	void AddGateType(std::string name, std::string truthTableName, int delay);
 	void AddGate(std::string name, std::string typeName, std::vector<std::string> inputNames);
 	void AddProbe(std::string gateName);
-	Gate* GetGate(std::string gateName) { return &(m_gates[gateName]); }
+	Gate& GetGate(const std::string& gateName);
+	TruthTable& GetTruthTable(const std::string& name);
+	GateType& GetType(const std::string& name);
 	std::vector<Gate*> ProbeAllGates();
 
 	template <typename Writer>

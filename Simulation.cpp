@@ -20,11 +20,11 @@ void Transition::Apply()
 
 void Simulation::AddTransition(std::string gateName, int outputValue, int outputTime)
 {
-	Gate* pGate = m_circuit->GetGate(gateName);
-	m_inTransitions.emplace_back(Transition{ pGate, outputValue, outputTime });
+	Gate& pGate = m_circuit->GetGate(gateName);
+	m_inTransitions.emplace_back(Transition{ &pGate, outputValue, outputTime });
 }
 
-std::unique_ptr<Simulation> Simulation::FromFile(std::ifstream& is)
+std::unique_ptr<Simulation> Simulation::GetSimulationFromFile(std::ifstream& is)
 {
 	auto simulation = std::make_unique<Simulation>();
 	auto* circut = simulation->GetCircut();
@@ -149,18 +149,18 @@ void Simulation::Run()
 
 void Simulation::UndoProbeAllGates()
 {
-	for (auto* gate : m_undoLog)
+	for (auto* gate : m_undoProbes)
 	{
 		gate->UndoProbe();
 	}
-	m_undoLog.clear();
+	m_undoProbes.clear();
 }
 
 void Simulation::PrintProbes(std::ostream& os)
 {
 	for (const auto& probe : m_probes)
 	{
-		if (!m_circuit->GetGate(probe.gateName)->IsProbed())
+		if (!m_circuit->GetGate(probe.gateName).IsProbed())
 			continue;
 		os << probe.time << " " << probe.gateName << " " << probe.newValue << std::endl;
 	}

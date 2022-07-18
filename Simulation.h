@@ -8,7 +8,7 @@
 
 struct Transition
 {
-	Transition(Gate* g, int output, int t) : gate(g), newOutput(output), time(t) {}
+	explicit Transition(Gate* g, int output, int t) : gate(g), newOutput(output), time(t) {}
 	bool operator<(const Transition& other) const noexcept
 	{
 		if (time == other.time)
@@ -17,9 +17,9 @@ struct Transition
 	}
 	bool IsValid() const noexcept {  return gate->GetOutput() != newOutput; }
 	void Apply();
-	Gate* gate;
-	int newOutput;
-	int time;
+	Gate* gate{nullptr};
+	int newOutput{0};
+	int time{0};
 	int objectId = ++GlobalId;
 	static int GlobalId;
 };
@@ -45,22 +45,22 @@ struct Probe
 		writer.Int(newValue);
 		writer.EndArray();
 	}
-	int time{};
+	int time{0};
 	std::string gateName;
-	int newValue{};
+	int newValue{0};
 };
 
 class Simulation
 {
 public:
 	Simulation() : m_circuit(new Circuit()) {};
-	static std::unique_ptr<Simulation> FromFile(std::ifstream& is);
+	static std::unique_ptr<Simulation> GetSimulationFromFile(std::ifstream& is);
 	void LayoutFromFile(std::ifstream& is);
 	void AddTransition(std::string gateName, int outputValue, int outputTime);
 	Circuit* GetCircut() { return m_circuit.get(); }
 	int Step();
 	void Run();
-	void ProbeAllGates() { m_undoLog = m_circuit->ProbeAllGates(); }
+	void ProbeAllGates() { m_undoProbes = m_circuit->ProbeAllGates(); }
 	void UndoProbeAllGates();
 
 	template <typename Writer>
@@ -92,5 +92,5 @@ private:
 		[]( Transition& a, Transition& b )->bool { return a.time >= b.time; }
 	};
 	std::vector<Probe> m_probes;
-	std::vector<Gate*> m_undoLog;
+	std::vector<Gate*> m_undoProbes;
 };

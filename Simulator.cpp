@@ -16,7 +16,7 @@ int main(int argc, char** argv)
     }
     bool json = (argc >= 3 && "json" == std::string(argv[2]));
     std::ifstream input(argv[1], std::ios::in);
-    auto simulation = Simulation::FromFile(input);
+    auto simulation = Simulation::GetSimulationFromFile(input);
     
     if (json)
     {

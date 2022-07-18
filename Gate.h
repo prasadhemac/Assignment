@@ -7,11 +7,10 @@
 class Gate
 {
 public:
-	Gate() {}
-	explicit Gate(std::string name, const GateType* type) : m_name(name), m_type(type) {};
+	explicit Gate(std::string name, const GateType& type) : m_name(name), m_type(type){};
 	void ConnectInput(int i, Gate* target);
 	void AddOutput(Gate* target);
-	void Probe() noexcept;
+	void Probe();
 	bool IsProbed() const noexcept { return m_probed; }
 	int GetOutput() const noexcept { return m_output; }
 	void SetOutput(int value) noexcept { m_output = value; }
@@ -19,7 +18,7 @@ public:
 	std::vector<Gate*> GetOutGates() { return m_outGates; }
 	int GetTransitionOutput() const;
 	int GetTransitionTime(int time) const;
-	void UndoProbe();
+	void UndoProbe() noexcept;
 
 	template <typename Writer>
 	void Serialize(Writer& writer) const noexcept{
@@ -33,15 +32,15 @@ public:
 	#endif
 		writer.String("table");
 	#if RAPIDJSON_HAS_STDSTRING
-		writer.String(m_type->GetTruthTableName());
+		writer.String(m_type.GetTruthTableName());
 	#else
-		writer.String(m_type->GetTruthTableName().c_str(), static_cast<rapidjson::SizeType>(m_type->GetTruthTableName().length()));
+		writer.String(m_type.GetTruthTableName().c_str(), static_cast<rapidjson::SizeType>(m_type.GetTruthTableName().length()));
 	#endif
 		writer.String("type");
 	#if RAPIDJSON_HAS_STDSTRING
-		writer.String(m_type->GetType());
+		writer.String(m_type.GetType());
 	#else
-		writer.String(m_type->GetType().c_str(), static_cast<rapidjson::SizeType>(m_type->GetType().length()));
+		writer.String(m_type.GetType().c_str(), static_cast<rapidjson::SizeType>(m_type.GetType().length()));
 	#endif
 		writer.String("probed");
 		writer.Bool(m_probed);
@@ -73,11 +72,11 @@ public:
 		writer.EndObject();
 	}
 private:
-	const GateType* m_type{};
+	const GateType  &m_type;
 	std::string m_name;
 	std::map<int, Gate*> m_inGates;
 	std::vector<Gate*> m_outGates;
-	bool m_probed{};
-	int m_output{};
-	int m_delay{};
+	bool m_probed{0};
+	int m_output{0};
+	int m_delay{0};
 };
