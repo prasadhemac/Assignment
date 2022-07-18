@@ -28,50 +28,50 @@ std::unique_ptr<Simulation> Simulation::GetSimulationFromFile(std::ifstream& is)
 {
 	auto simulation = std::make_unique<Simulation>();
 	auto* circut = simulation->GetCircut();
-	for (;;)
+	const boost::char_separator<char> sep(" ");
+	std::string line;
+		
+	while (std::getline(is, line))
 	{
-		boost::char_separator<char> sep(" ");
-		std::string line;
-		std::getline(is, line);
 		boost::tokenizer< boost::char_separator<char>> tokens(line, sep);
-		std::vector<std::string> command;
+		std::vector<std::string> commands;
 		for (const auto& v : tokens)
-			command.emplace_back(v);
-		if (command.empty())
+			commands.emplace_back(v);
+		if (commands.empty())
 			continue;
-		if (command[0] == "table")
+		if (commands[0] == "table")
 		{
 			std::vector<int> outputs;
-			for (size_t i = 2; i < command.size(); ++i)
-				outputs.emplace_back(std::stoi(command[i]));
-			circut->AddTruthTable(command[1], outputs);
+			for (size_t i = 2; i < commands.size(); ++i)
+				outputs.emplace_back(std::stoi(commands[i]));
+			circut->AddTruthTable(commands[1], outputs);
 		}
-		else if (command[0] == "type")
+		else if (commands[0] == "type")
 		{
-			if (command.size() != 4)
+			if (commands.size() != 4)
 				error_handler::throw_with_trace(std::runtime_error("Invalid number of arguments for gate type"));
-			circut->AddGateType(command[1], command[2], std::stoi(command[3]));
+			circut->AddGateType(commands[1], commands[2], std::stoi(commands[3]));
 		}
-		else if (command[0] == "gate")
+		else if (commands[0] == "gate")
 		{
 			std::vector<std::string> inputs;
-			for (size_t i = 3; i < command.size(); ++i)
-				inputs.emplace_back(command[i]);
-			circut->AddGate(command[1], command[2], inputs);
+			for (size_t i = 3; i < commands.size(); ++i)
+				inputs.emplace_back(commands[i]);
+			circut->AddGate(commands[1], commands[2], inputs);
 		}
-		else if (command[0] == "probe")
+		else if (commands[0] == "probe")
 		{
-			if (command.size() != 2)
+			if (commands.size() != 2)
 				error_handler::throw_with_trace(std::runtime_error("Invalid number of arguments for probe type"));
-			circut->AddProbe(command[1]);
+			circut->AddProbe(commands[1]);
 		}
-		else if (command[0] == "flip")
+		else if (commands[0] == "flip")
 		{
-			if (command.size() != 4)
+			if (commands.size() != 4)
 				error_handler::throw_with_trace(std::runtime_error("Invalid number of arguments for flip type"));
-			simulation->AddTransition(command[1], std::stoi(command[2]), std::stoi(command[3]));
+			simulation->AddTransition(commands[1], std::stoi(commands[2]), std::stoi(commands[3]));
 		}
-		else if (command[0] == "done")
+		else if (commands[0] == "done")
 			break;
 
 	}
