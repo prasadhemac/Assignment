@@ -53,7 +53,7 @@ struct Probe
 class Simulation
 {
 public:
-	Simulation() : m_circuit(new Circuit()) {};
+	Simulation() : m_circuit(std::make_unique<Circuit>()) {};
 	static std::unique_ptr<Simulation> GetSimulationFromFile(std::ifstream& is);
 	void LayoutFromFile(std::ifstream& is);
 	void AddTransition(const std::string& gateName, int outputValue, int outputTime);
